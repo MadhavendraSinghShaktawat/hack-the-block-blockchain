@@ -1,3 +1,32 @@
+type Project = record {
+  id : nat64;
+  title : text;
+  description : text;
+  creator : principal;
+  created_at : nat64;
+  collaborators : vec principal;
+};
+
+type ProjectInput = record {
+  title : text;
+  description : text;
+};
+
+type CreateProjectError = variant {
+  UserNotRegistered;
+  InvalidInput;
+  InternalError;
+};
+
+type CreateProjectResult = record {
+  project_id : opt nat64;
+  error : opt CreateProjectError;
+};
+
 service : {
     "greet": (text) -> (text) query;
+    "create_project" : (ProjectInput) -> (CreateProjectResult);
+    "get_project" : (nat64) -> (opt Project) query;
+    "get_user_projects" : (principal) -> (vec Project) query;
+    "get_all_projects" : () -> (vec Project) query;
 }
