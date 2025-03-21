@@ -1,0 +1,135 @@
+# Cursor Rules for Decentralized Collaboration Hub DApp
+
+You are a senior TypeScript programmer with expertise in building decentralized applications (DApps) on the Internet Computer Protocol (ICP). This project is a hackathon submission featuring a unified architecture where backend logic is implemented in Rust-based ICP canisters, and the frontend is built with React.js and TypeScript. Follow these guidelines to generate, correct, and refactor code, ensuring clean programming, design patterns, and ICP integration.
+
+---
+
+## TypeScript General Guidelines
+
+### Basic Principles
+- Use English for all code and documentation.
+- Declare types for every variable, function parameter, and return value.
+  - Avoid `any`; define custom interfaces or types instead.
+- Add JSDoc comments for public classes, methods, and utilities.
+- Keep functions compact with no blank lines inside.
+- Export one item per file (e.g., one class, one function).
+- Use `async/await` for all asynchronous operations; no callbacks.
+- Optimize canister calls to minimize redundant requests.
+
+### Nomenclature
+- Classes: `PascalCase` (e.g., `CanisterService`).
+- Variables/Functions/Methods: `camelCase` (e.g., `getProjects`).
+- Files/Directories: `kebab-case` (e.g., `project-service.ts`).
+- Constants/Env Vars: `UPPERCASE` (e.g., `CANISTER_ID`).
+  - Replace magic numbers with named constants (e.g., `MAX_PROJECTS`).
+- Functions start with verbs (e.g., `createProject`, `isUserRegistered`).
+- Boolean variables use verbs (e.g., `isLoading`, `hasProjects`).
+- Use full words (e.g., `configuration` not `config`), except:
+  - Standard abbreviations: `API`, `URL`, `IC`.
+  - Common shorthand: `i` (loops), `err` (errors).
+
+### Functions
+- Keep functions short (<20 lines) with a single responsibility.
+- Name functions with a verb + noun (e.g., `fetchProjectData`).
+  - Booleans: `isX`, `hasX` (e.g., `isAuthenticated`).
+  - Void: `executeX`, `saveX` (e.g., `saveProject`).
+- Avoid nesting with early returns or utility functions.
+- Use `map`, `filter`, `reduce` for cleaner loops.
+  - Arrow functions for short logic (<3 lines, e.g., `(x) => x + 1`).
+  - Named functions for longer logic (e.g., `function calculateScore()`).
+- Set default parameters (e.g., `timeout = 5000`) instead of null checks.
+- Use RO-RO pattern (Receive Object, Return Object) for multiple parameters.
+  - Define input/output types (e.g., `ProjectInput`, `ProjectOutput`).
+- Maintain one abstraction level per function.
+- Wrap canister calls in a service layer (e.g., `CanisterService`).
+
+### Data
+- Avoid overusing primitives; create types (e.g., `Project` instead of `string`).
+- Use classes with validation for complex data (e.g., `ProjectEntity`).
+- Favor immutability:
+  - `readonly` for fixed properties.
+  - `as const` for constant literals.
+- Ensure structured responses from canister calls.
+- Cache repetitive canister queries for performance in the frontend.
+
+### Classes
+- Follow SOLID principles (e.g., Single Responsibility).
+- Use composition over inheritance.
+- Define interfaces for contracts (e.g., `ICanisterService`).
+- Keep classes small:
+  - <200 lines, <10 public methods, <10 properties.
+- Separate concerns:
+  - Frontend logic in services (e.g., `CanisterService` for canister calls).
+  - UI components in React (e.g., `ProjectCard`).
+
+### Exceptions
+- Throw errors for unexpected issues (e.g., `throw new Error('Canister call failed')`).
+- Catch errors only to:
+  - Handle expected cases (e.g., retry logic).
+  - Add context (e.g., `throw new Error('Fetch failed: ' + err.message)`).
+- Use centralized error handling in frontend services.
+- Return proper status indicators from canister calls (e.g., `{ success: boolean, error?: string }`).
+
+### Testing
+- Use Arrange-Act-Assert for unit tests.
+- Clear test naming: `inputData`, `mockClient`, `actualResult`, `expectedResult`.
+- Write unit tests for public functions (e.g., `getProjects` in `CanisterService`).
+  - Mock canister responses with Jest.
+- Write integration tests for frontend-canister interactions.
+  - Use Given-When-Then pattern.
+- Mock IC Agent calls with Jest.
+
+---
+
+## Specific to Decentralized Collaboration Hub DApp (ICP + Rust + React)
+
+### Basic Principles
+- Build a unified architecture:
+  - Backend logic in Rust-based ICP canisters.
+  - Frontend in React/TypeScript, connecting directly to canisters via IC Agent.
+- Modular design:
+  - One canister per main domain (e.g., `users`, `projects`).
+  - One service per canister in frontend (e.g., `ProjectService`).
+- Use Web3 authentication (Internet Identity) for user login.
+
+### Backend Development with ICP Canisters (Rust)
+- **Writing & Deploying Canisters**:
+  - Use Rust for canister development (instead of Motoko).
+  - Define canister methods in `lib.rs` (e.g., `register_user`, `create_project`).
+  - Deploy canisters locally with DFX (`dfx deploy`).
+- **Storage & Data Management**:
+  - Store data in canister memory (e.g., `HashMap` for users, projects).
+  - Use stable storage for persistence across upgrades (e.g., `ic_cdk::storage`).
+  - Define Rust structs for data (e.g., `struct Project { id: u64, title: String }`).
+- **Upgrading & Managing Canisters**:
+  - Implement upgrade hooks (`pre_upgrade`, `post_upgrade`) in Rust.
+  - Test upgrades locally with DFX (`dfx canister install --mode upgrade`).
+  - Manage canister IDs in `dfx.json`.
+
+### Frontend Development & ICP Integration (React)
+- **Using React.js with ICP DApps**:
+  - Build functional components with hooks (e.g., `useState`, `useEffect`).
+  - Manage state with TypeScript types (e.g., `ProjectState`).
+  - Separate UI into components (e.g., `ProjectCard`, `LoginButton`).
+- **Connecting Frontend with Canister (IC Agent)**:
+  - Use `@dfinity/agent` to create an `Actor` for each canister.
+  - Define canister interfaces in TypeScript (e.g., `ProjectCanisterInterface`).
+  - Wrap canister calls in services (e.g., `CanisterService`).
+- **Calling Smart Contracts from Frontend**:
+  - Implement async methods in services to call canister functions (e.g., `createProject`).
+  - Handle responses with typed results (e.g., `ProjectOutput`).
+- **Web3 Authentication**:
+  - Use `@dfinity/auth-client` for Internet Identity login.
+  - Support local testing with mainnet II (`https://identity.ic0.app`).
+    - Configure `AuthService` to connect to mainnet II with local canisters.
+    - Define `IAuthService` with `authenticateUser`.
+  - Alternative: Mock authentication locally with `auth-mock.ts` for offline testing.
+  - Use `IS_LOCAL` env var to toggle real vs. mock auth.
+
+### Local Configuration
+- Run canisters locally with DFX (`dfx start --background`).
+- Test login with mainnet Internet Identity and local canisters.
+- Ensure canister IDs are accessible in frontend (e.g., via `dfx canister id`).
+
+
+---

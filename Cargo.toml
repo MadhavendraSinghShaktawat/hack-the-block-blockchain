@@ -1,0 +1,5 @@
+[workspace]
+members = [
+    "src/hack-the-block-v0-backend"
+]
+resolver = "2"

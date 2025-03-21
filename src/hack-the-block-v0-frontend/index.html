@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hack The Block v0</title>
+  <base href="/" />
+  <link rel="icon" href="/favicon.ico" />
+  <!-- Essential polyfills for Internet Computer -->
+  <script>
+    window.global = window;
+    window.process = { env: {} };
+  </script>
+</head>
+
+<body>
+  <div class="browser-warning">
+    ⚠️ If this page appears broken, try reloading. If the problem persists, try switching browsers; Chrome or
+    Firefox are recommended.
+  </div>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+
+</html>

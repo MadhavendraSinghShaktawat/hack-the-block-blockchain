@@ -1,0 +1,38 @@
+{
+  "canisters": {
+    "hack-the-block-v0-backend": {
+      "candid": "src/hack-the-block-v0-backend/hack-the-block-v0-backend.did",
+      "package": "hack-the-block-v0-backend",
+      "type": "rust"
+    },
+    "hack-the-block-v0-frontend": {
+      "dependencies": [
+        "hack-the-block-v0-backend"
+      ],
+      "source": [
+        "src/hack-the-block-v0-frontend/dist"
+      ],
+      "type": "assets",
+      "workspace": "hack-the-block-v0-frontend"
+    },
+    "internet_identity": {
+      "candid": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity.did",
+      "frontend": {},
+      "remote": {
+        "id": {
+          "ic": "rdmx6-jaaaa-aaaaa-aaadq-cai"
+        }
+      },
+      "type": "custom",
+      "wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm.gz"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}

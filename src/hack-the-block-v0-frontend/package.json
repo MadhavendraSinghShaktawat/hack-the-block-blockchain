@@ -1,0 +1,35 @@
+{
+  "name": "hack-the-block-v0-frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "setup": "npm i && dfx canister create hack-the-block-v0-backend && dfx generate hack-the-block-v0-backend && dfx deploy",
+    "start": "vite --port 3000",
+    "prebuild": "dfx generate",
+    "build": "vite build",
+    "format": "prettier --write \"src/**/*.{json,js,jsx,ts,tsx,css,scss}\"",
+    "dev": "vite",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@dfinity/agent": "^0.15.7",
+    "@dfinity/auth-client": "^0.15.6",
+    "@dfinity/candid": "^0.15.6",
+    "@dfinity/principal": "^0.15.7",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-toastify": "^9.1.3"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.17",
+    "@types/react-dom": "^18.0.6",
+    "@vitejs/plugin-react": "^2.0.1",
+    "dotenv": "^16.3.1",
+    "path": "^0.12.7",
+    "sass": "^1.63.6",
+    "typescript": "^5.1.3",
+    "vite": "^3.0.7",
+    "vite-plugin-environment": "^1.1.3"
+  }
+}
