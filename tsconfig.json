@@ -1,11 +1,25 @@
 {
     "compilerOptions": {
-        "strict": true,
-        "target": "ES2020",
-        "experimentalDecorators": true,
-        "strictPropertyInitialization": false,
+        "target": "es2020",
+        "module": "esnext",
         "moduleResolution": "node",
-        "allowJs": true,
-        "outDir": "HACK_BECAUSE_OF_ALLOW_JS"
-    }
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "jsx": "react",
+        "strict": true,
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        "forceConsistentCasingInFileNames": true,
+        "lib": ["dom", "dom.iterable", "esnext"],
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["src/*"]
+        },
+        "skipLibCheck": true,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "noEmit": true
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules", "build", "dist"]
 }

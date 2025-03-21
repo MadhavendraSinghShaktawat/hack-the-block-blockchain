@@ -1,18 +1,56 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from './hooks/useAuth';
 import './App.css';
+import { getUsername, saveUsername } from './services/userService';
 
-// Import or create components
+// Import components
 import LoginButton from './components/LoginButton';
-import BackendInteraction from './components/BackendInteraction.jsx';
 import ICPLogo from './components/ICPLogo';
+import Dashboard from './components/Dashboard';
 
+/**
+ * Main application component that handles authentication state and routing
+ */
 function App() {
-  const { isAuthenticated, isLoading, principal, login, logout, backendActor } = useAuth();
+  const { isAuthenticated, isLoading, principal, login, logout } = useAuth();
+  const [username, setUsername] = useState(null);
+  const [loadingUsername, setLoadingUsername] = useState(false);
 
-  return (
-    <div className="app-container">
-      {!isAuthenticated ? (
+  // Fetch username when authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      const fetchUsername = async () => {
+        try {
+          setLoadingUsername(true);
+          const savedUsername = await getUsername();
+          setUsername(savedUsername);
+        } catch (error) {
+          console.error('Error fetching username:', error);
+        } finally {
+          setLoadingUsername(false);
+        }
+      };
+      
+      fetchUsername();
+    }
+  }, [isAuthenticated]);
+  
+  // Handle username updates
+  const handleUpdateUsername = async (newUsername) => {
+    try {
+      await saveUsername(newUsername);
+      setUsername(newUsername);
+      return true;
+    } catch (error) {
+      console.error('Error updating username:', error);
+      return false;
+    }
+  };
+
+  // Landing page for non-authenticated users
+  if (!isAuthenticated) {
+    return (
+      <div className="app-container">
         <div className="landing-page">
           <div className="bg-pattern"></div>
           <nav className="landing-nav">
@@ -59,77 +97,72 @@ function App() {
             </div>
           </div>
         </div>
-      ) : (
-        <div className="authenticated-container">
-          <header className="header">
-            <div className="logo-container">
-              <ICPLogo />
-              <h1>CollabChain</h1>
-            </div>
-            <div className="user-info">
-              <div className="user-badge">
-                <div className="user-avatar">{principal?.charAt(0) || 'U'}</div>
-                <p>Connected as: <span className="principal">{principal}</span></p>
-              </div>
-              <button 
-                className="logout-button"
-                onClick={() => logout({
-                  onSuccess: () => console.log('Logout successful'),
-                  onError: (error) => console.error('Logout failed:', error)
-                })}
-              >
-                Sign Out
-              </button>
-            </div>
-          </header>
-          
-          <div className="dashboard">
-            <aside className="sidebar">
-              <nav className="sidebar-nav">
-                <ul>
-                  <li className="nav-item active">
-                    <span className="nav-icon">📊</span>
-                    <span>Dashboard</span>
-                  </li>
-                  <li className="nav-item">
-                    <span className="nav-icon">🏗️</span>
-                    <span>Projects</span>
-                  </li>
-                  <li className="nav-item">
-                    <span className="nav-icon">👥</span>
-                    <span>Teams</span>
-                  </li>
-                  <li className="nav-item">
-                    <span className="nav-icon">📝</span>
-                    <span>Tasks</span>
-                  </li>
-                  <li className="nav-item">
-                    <span className="nav-icon">⚙️</span>
-                    <span>Settings</span>
-                  </li>
-                </ul>
-              </nav>
-              <div className="sidebar-footer">
-                <div className="version">v0.1.0</div>
-              </div>
-            </aside>
-            
-            <main className="main-content">
-              <div className="page-header">
-                <h1>Dashboard</h1>
-                <div className="page-actions">
-                  <button className="action-btn">
-                    <span>New Project</span>
-                  </button>
-                </div>
-              </div>
-              <div className="content">
-                <BackendInteraction actor={backendActor} />
-              </div>
-            </main>
+      </div>
+    );
+  }
+
+  // Dashboard for authenticated users
+  return (
+    <div className="app-container">
+      <div className="authenticated-container">
+        <header className="header">
+          <div className="logo-container">
+            <ICPLogo />
+            <h1>CollabChain</h1>
           </div>
+          <div className="user-info">
+            <div className="user-badge">
+              <div className="user-avatar">{principal?.charAt(0) || 'U'}</div>
+              <p>Connected as: <span className="principal">{username || principal?.substring(0, 10) + '...'}</span></p>
+            </div>
+            <button 
+              className="logout-button"
+              onClick={() => logout({
+                onSuccess: () => console.log('Logout successful'),
+                onError: (error) => console.error('Logout failed:', error)
+              })}
+            >
+              Sign Out
+            </button>
+          </div>
+        </header>
+        
+        <div className="main-layout">
+          <aside className="sidebar">
+            <nav className="sidebar-nav">
+              <ul>
+                <li className="nav-item active">
+                  <span className="nav-icon">📊</span>
+                  <span>Dashboard</span>
+                </li>
+                <li className="nav-item">
+                  <span className="nav-icon">🏗️</span>
+                  <span>Projects</span>
+                </li>
+                <li className="nav-item">
+                  <span className="nav-icon">👥</span>
+                  <span>Teams</span>
+                </li>
+                <li className="nav-item">
+                  <span className="nav-icon">📝</span>
+                  <span>Tasks</span>
+                </li>
+                <li className="nav-item">
+                  <span className="nav-icon">⚙️</span>
+                  <span>Settings</span>
+                </li>
+              </ul>
+            </nav>
+            <div className="sidebar-footer">
+              <div className="version">v0.1.0</div>
+            </div>
+          </aside>
+          
+          <main className="main-content">
+            <Dashboard />
+          </main>
         </div>
-      )}
+      </div>
     </div>
   );
 }

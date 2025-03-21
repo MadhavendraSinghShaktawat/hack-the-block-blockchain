@@ -1,0 +1,116 @@
+.user-registration-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.user-registration-modal {
+  background-color: white;
+  border-radius: 8px;
+  padding: 25px;
+  width: 90%;
+  max-width: 450px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.user-registration-modal h2 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #333;
+  font-size: 24px;
+}
+
+.registration-description {
+  color: #666;
+  margin-bottom: 20px;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #444;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #4a46ff;
+  box-shadow: 0 0 0 2px rgba(74, 70, 255, 0.2);
+}
+
+.error-message {
+  color: #d32f2f;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 25px;
+}
+
+.submit-button, .cancel-button {
+  padding: 12px 20px;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.submit-button {
+  background-color: #4a46ff;
+  color: white;
+  min-width: 120px;
+}
+
+.submit-button:hover {
+  background-color: #3935cc;
+  transform: translateY(-2px);
+}
+
+.cancel-button {
+  background-color: #f1f1f1;
+  color: #666;
+}
+
+.cancel-button:hover {
+  background-color: #e1e1e1;
+}
+
+.submit-button:disabled, .cancel-button:disabled {
+  background-color: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
+  transform: none;
+} 
