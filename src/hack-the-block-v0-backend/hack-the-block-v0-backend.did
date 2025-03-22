@@ -2,8 +2,8 @@ type Project = record {
   id : nat64;
   title : text;
   description : text;
-  creator : principal;
   created_at : nat64;
+  creator : principal;
   collaborators : vec principal;
 };
 
@@ -29,4 +29,5 @@ service : {
     "get_project" : (nat64) -> (opt Project) query;
     "get_user_projects" : (principal) -> (vec Project) query;
     "get_all_projects" : () -> (vec Project) query;
+    "get_projects" : () -> (vec Project) query;
 }

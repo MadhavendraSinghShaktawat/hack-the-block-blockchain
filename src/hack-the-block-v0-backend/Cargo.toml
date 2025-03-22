@@ -9,8 +9,14 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [dependencies]
-candid = "0.10.0"
-ic-cdk = "0.17.0"
+candid = "0.8.4"
+ic-cdk = "0.7.4"
 ic-cdk-timers = "0.11.0" # Feel free to remove this dependency if you don't need timers
-serde = { version = "1.0.188", features = ["derive"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
 ic-stable-structures = "0.6.0"
+
+[profile.release]
+lto = true
+opt-level = 'z'
+panic = 'abort'

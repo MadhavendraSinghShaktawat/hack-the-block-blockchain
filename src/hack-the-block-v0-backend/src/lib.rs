@@ -1,5 +1,5 @@
 use candid::{CandidType, Deserialize, Principal};
-use ic_cdk::{query, update};
+use ic_cdk::{query, update, pre_upgrade, post_upgrade, storage, api::time};
 use std::cell::RefCell;
 use std::collections::HashMap;
 
@@ -57,18 +57,6 @@ fn create_project(input: ProjectInput) -> CreateProjectResult {
         };
     }
     
-    // Check if user is registered (assuming you have a USER_REGISTRY or similar)
-    // This check will depend on your existing user registration system
-    // For example:
-    // if !is_user_registered(caller) {
-    //     return CreateProjectResult {
-    //         project_id: None,
-    //         error: Some(CreateProjectError::UserNotRegistered),
-    //     };
-    // }
-    
-    // For now, we'll assume all callers are registered to avoid modifying existing code
-    
     // Create and store the project
     let project_id = NEXT_PROJECT_ID.with(|id| {
         let current_id = *id.borrow();
@@ -76,7 +64,7 @@ fn create_project(input: ProjectInput) -> CreateProjectResult {
         current_id
     });
     
-    let now = ic_cdk::api::time(); // timestamp in nanoseconds
+    let now = time(); // timestamp in nanoseconds
     
     let project = Project {
         id: project_id,
@@ -128,5 +116,45 @@ fn get_all_projects() -> Vec<Project> {
     })
 }
 
-// Export the Candid interface
-ic_cdk::export_candid!();
+// Query to match the expected interface
+#[query]
+fn get_projects() -> Vec<Project> {
+    get_all_projects()
+}
+
+// Simple greeting function for testing
+#[query]
+fn greet(name: String) -> String {
+    format!("Hello, {}!", name)
+}
+
+// Pre-upgrade hook to save the state before canister upgrade
+#[pre_upgrade]
+fn pre_upgrade_hook() {
+    PROJECTS.with(|projects| {
+        let projects_data = projects.borrow();
+        storage::stable_save((projects_data.clone(), NEXT_PROJECT_ID.with(|id| *id.borrow()))).unwrap();
+    });
+}
+
+// Post-upgrade hook to restore the state after canister upgrade
+#[post_upgrade]
+fn post_upgrade_hook() {
+    let (projects_data, next_id): (HashMap<u64, Project>, u64) = storage::stable_restore().unwrap();
+    
+    PROJECTS.with(|projects| {
+        *projects.borrow_mut() = projects_data;
+    });
+    
+    NEXT_PROJECT_ID.with(|id| {
+        *id.borrow_mut() = next_id;
+    });
+}
+
+// Candid interface generation
+candid::export_service!();
+
+#[query(name = "__get_candid_interface_tmp_hack")]
+fn export_candid() -> String {
+    __export_service()
+}
